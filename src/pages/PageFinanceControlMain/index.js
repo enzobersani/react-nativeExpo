@@ -2,11 +2,11 @@ import React, {useState} from "react";
 import { 
     View,
     Text,
+    TextInput,
     StyleSheet,
     TouchableOpacity,
-    ScrollView, 
-    TouchableWithoutFeedback,
-    Keyboard} 
+    Keyboard,
+    FlatList,} 
     from "react-native";
 import * as Animatable from 'react-native-animatable';
 import { TextInputMask } from "react-native-masked-text";
@@ -20,6 +20,13 @@ const monthNames = [
 const handlePressOutside = () => {
     Keyboard.dismiss(); // Fecha o teclado
   };
+
+  const data = [
+    { id: '1', valor: 'R$ 100,00', descricao:'Salario' ,modo: 'Entrada', data: '15/11/2023' },
+    { id: '2', valor: 'R$ 50,00', descricao:'Bico Restaurante' ,modo: 'Entrada', data: '16/11/2023' },
+    { id: '3', valor: 'R$ 75,00', descricao:'Contas' ,modo: 'Saida', data: '15/11/2023' },
+    { id: '4', valor: 'R$ 100,00', descricao:'Role' ,modo: 'Entrada', data: '15/11/2023' },
+  ];
 
 export default function PageFinanceControlMain(props){
     const [inputMoeda, setInputMoeda] = useState('0');
@@ -41,9 +48,17 @@ export default function PageFinanceControlMain(props){
     const selectedMonth = props.route.params.paramKey;
     const monthIndex = Math.max(1, Math.min(12, selectedMonth)) - 1;
     const monthName = monthNames[monthIndex];
+
+    const renderItem = ({ item }) => (
+        <View style={styles.item}>
+          <Text style={styles.column}>{item.valor}</Text>
+          <Text style={styles.column}>{item.descricao}</Text>
+          <Text style={styles.column}>{item.modo}</Text>
+          <Text style={styles.column}>{item.data}</Text>
+        </View>
+      );
     
     return(    
-        <TouchableWithoutFeedback onPress={handlePressOutside}>
             <View style={styles.container}>
                 <Animatable.View animation="fadeInLeft" delay={500} style={styles.containerHeader}>
                     <Text style={styles.message}>{monthName}</Text>
@@ -64,6 +79,10 @@ export default function PageFinanceControlMain(props){
                                 setValorMoeda(Number(value));
                             }}
                         />
+                        <Text style={styles.textValor}>Informe uma descricao</Text>
+                        <TextInput
+                          style={styles.input}
+                        />
 
                     <View style={styles.radioButtonContainer}>
                         <TouchableOpacity
@@ -81,14 +100,29 @@ export default function PageFinanceControlMain(props){
                         </TouchableOpacity>
                     </View>
 
-                    <TouchableOpacity style={styles.buttonConfirmar}>
+                    <TouchableOpacity 
+                    style={styles.buttonConfirmar}
+                    onPress={Keyboard.dismiss}>
                         <Text style={styles.textConfirmar}>Confirmar</Text>
                     </TouchableOpacity>
 
                     <Text style={estiloValor}>{valorFormatado}</Text>
+
+                    <View style={styles.header}>
+                        <Text style={styles.columnHeader}>Valor</Text>
+                        <Text style={styles.columnHeader}>Descricao</Text>
+                        <Text style={styles.columnHeader}>Modo</Text>
+                        <Text style={styles.columnHeader}>Data</Text>
+                    </View>
+                    <FlatList
+                        style={{flex: 1}}
+                        nestedScrollEnabled
+                        data={data}
+                        keyExtractor={(item) => item.id}
+                        renderItem={renderItem}
+                    />
                 </View>
             </View>
-        </TouchableWithoutFeedback>
     );
 }
 
@@ -190,5 +224,27 @@ const styles = StyleSheet.create({
         fontSize: 20,
         fontWeight: 'bold',
         color: '#FFF'
-      }
+      },
+      header: {
+        marginTop: 20,
+        flexDirection: 'row',
+        justifyContent: 'space-around',
+        padding: 10,
+        backgroundColor: '#f2f2f2',
+      },
+      columnHeader: {
+        fontWeight: 'bold',
+        marginEnd: '5%'
+      },
+      item: {
+        flexDirection: 'row', // ou 'flex-start' para alinhar à esquerda
+        alignItems: 'center', // ou 'flex-start' para alinhar ao topo
+        padding: 10,
+        borderBottomWidth: 1,
+        borderBottomColor: '#ccc',
+      },
+      column: {
+        flex: 1,
+        textAlign: 'auto',
+      },
  })

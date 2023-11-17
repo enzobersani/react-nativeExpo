@@ -13,6 +13,11 @@ export default function PageFinanceControl(){
     const navigation = useNavigation();
     const buttons = Array.from({ length: 12 }, (_, index) => `Mes /${index + 1}`);
 
+    const monthNames = [
+        "Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho",
+        "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"
+    ];
+
     const goToFinanceControlMain = (selectedMonth) => {
         navigation.navigate('PageFinanceControlMain', {paramKey: selectedMonth});
     };
@@ -25,17 +30,16 @@ export default function PageFinanceControl(){
             </Animatable.View>
     
             <ScrollView style={styles.containerForm}>
-                {buttons.map((buttonText, index) => (
+                {monthNames.map((monthName, index) => (
                 <TouchableOpacity
                     key={index}
                     style={styles.button}
                     onPress={() => goToFinanceControlMain(index + 1)}
                 >
-                    <Text style={styles.buttonText}>{buttonText}</Text>
+                    <Text style={styles.buttonText}>{monthName}</Text>
                 </TouchableOpacity>
         ))} 
             </ScrollView>
-    
         </View>
     );
 }
